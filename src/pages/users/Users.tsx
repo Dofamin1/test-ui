@@ -11,19 +11,16 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/ChangeCircle';
-import { fetchAllUsers, getAllUsersFromState } from './usersSlice';
+import { fetchAllUsers, getDeleteUser, getAllUsersFromState, deleteAllUsers } from './usersSlice';
 import { store } from '../../app/store';
+import { useAppSelector } from '../../app/hooks';
 
 export default function BasicTable() {
-    const [users, setUsers] = React.useState([]);
+    const users = useAppSelector(() => getAllUsersFromState(store.getState()));
 
     React.useEffect(() => {
-        console.log('use effect');
         const fetchUsers = async () => {
             await store.dispatch(fetchAllUsers);
-            const users = getAllUsersFromState(store.getState());
-            console.log('users', users);
-            setUsers(users);
         };
         fetchUsers();
     }, []);
@@ -34,7 +31,7 @@ export default function BasicTable() {
               <Stack spacing={2} direction="row" justifyContent="right" alignItems="right">
                   <Button variant="contained">New User</Button>
                   <Button variant="outlined">Upload .xlsx</Button>
-                  <Button variant="contained" color="error">Delete All</Button>
+                  <Button variant="contained" color="error" onClick={() => store.dispatch(deleteAllUsers)}>Delete All</Button>
               </Stack>
           </Container>
           <Container>
@@ -63,7 +60,7 @@ export default function BasicTable() {
                           <TableCell align="center">{new Date(row.updatedAt).toDateString()}</TableCell>
                           <TableCell align="center">
                               <Button type="text"><UpdateIcon/></Button>
-                              <Button color="error"><DeleteIcon/></Button>
+                              <Button color="error" onClick={() => store.dispatch(getDeleteUser(row.id))}><DeleteIcon/></Button>
                           </TableCell>
                         </TableRow>
                     ))}

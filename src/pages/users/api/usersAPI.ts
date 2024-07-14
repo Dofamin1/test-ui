@@ -5,7 +5,7 @@ import type { UserCreateData, UserData, UserUpdateData } from './interfaces';
 const usersApi = {
   createUser: async (userData: UserCreateData): Promise<UserData> => {
     try {
-      const response = await axios.post(config.API_URL, userData);
+      const response = await axios.post(`${config.API_URL}/user`, userData);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to create user');
@@ -14,7 +14,7 @@ const usersApi = {
 
   updateUser: async (userId: number, userData: UserUpdateData): Promise<UserData>  => {
     try {
-      const response = await axios.put(`${config.API_URL}/${userId}`, userData);
+      const response = await axios.put(`${config.API_URL}/user/${userId}`, userData);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update user');
@@ -24,25 +24,23 @@ const usersApi = {
   getUsers: async (): Promise<UserData[]> => {
     try {
       const response = await axios.get(config.API_URL + '/user');
-      console.log('response', response);
       return response.data;
     } catch (error) {
-      console.log('getUsers error', error);
       throw new Error(error.response?.data?.message || 'Failed to fetch users');
     }
   },
 
   deleteUser: async (userId: number): Promise<void> => {
     try {
-      await axios.delete(`${config.API_URL}/${userId}`);
+      await axios.delete(`${config.API_URL}/user/${userId}`);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to delete user');
     }
   },
 
-  deleteAllUser: async (userId: number): Promise<void> => {
+  deleteAllUsers: async (): Promise<void> => {
     try {
-      await axios.delete(`${config.API_URL}`);
+      await axios.delete(`${config.API_URL}/user`);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to delete user');
     }

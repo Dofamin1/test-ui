@@ -17,17 +17,23 @@ export const usersSlice = createAppSlice({
   name: "users",
   initialState,
   reducers: create => ({
-    updateUser: async (state: UserSliceState[]) => {
-
-    },
+    // updateUser: async (state: UserSliceState, action: PayloadAction<>) => {
+    //     const user = state.users.find
+    // },
     saveUsers: (state: UserSliceState, action: PayloadAction<UserData[]>) => {
         state.users = action.payload;
     },
-    deleteUser: async (state: UserSliceState[]) => {
-
+    createNewUser: (state: UserSliceState, action: PayloadAction<UserCreateData>) => {
+        state.users.push(action.payload);
     },
-    deleteAllUsers: async (state: UserSliceState[]) => {
-
+    deleteUser: (state: UserSliceState, action: PayloadAction<number>) => {
+        state.users = state.users.filter(user => user.id !== action.payload);
+    },
+    deleteAllUsers: (state: UserSliceState) => {
+        state.users = [];
+    },
+    setLoading: (state: UserSliceState, action: PayloadAction<boolean>) => {
+        state.loading = action.payload;
     }
   }),
 
@@ -39,8 +45,22 @@ export const usersSlice = createAppSlice({
 
 export const fetchAllUsers = async (dispatch) => {
     const users = await usersApi.getUsers();
-
     dispatch(usersSlice.actions.saveUsers(users));
 };
+
+export const deleteAllUsers = async (dispatch) => {
+    await usersApi.deleteAllUsers();
+    dispatch(usersSlice.actions.deleteAllUsers());
+}
+
+export const getDeleteUser = (userId: number) => async (dispatch) => {
+    await usersApi.deleteUser(userId);
+    dispatch(usersSlice.actions.deleteUser(userId));
+}
+
+export const createNewUser = async (dispatch, userData: UserCreateData) => {
+    const newUser = await usersApi.createUser(userData);
+    dispatch(usersSlice.actions.createNewUser(newUser));
+}
 
 export const { getAllUsersFromState } = usersSlice.selectors;
