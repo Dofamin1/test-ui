@@ -8,9 +8,11 @@ import Container from '@mui/material/Container';
 import {
     setNewUserEmail,
     setNewUserUsername,
+} from '../usersSlice'
+import {
     getCreateNewUser,
     getNewUserDataState
-} from '../usersSlice'
+} from '../usersSlice';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { store } from "../../../app/store";
 
@@ -20,7 +22,7 @@ export interface SimpleDialogProps {
     onClose: (value: string) => void;
 }
 
-export default function SimpleDialog(props: SimpleDialogProps) {
+export default function CreateUserDialog(props: SimpleDialogProps) {
     const { onClose, open } = props;
     const dispatch = useAppDispatch();
     const userData = useAppSelector(() => getNewUserDataState(store.getState()));

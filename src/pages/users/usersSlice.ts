@@ -9,6 +9,11 @@ export interface UserSliceState {
   createDialogOpen: boolean,
   updateDialogOpen: boolean,
   newUserData: UserCreateData,
+  updatedUserData: {
+      id: null | number,
+      email: string,
+      username: string
+  },
 };
 
 const initialState: UserSliceState = {
@@ -19,16 +24,29 @@ const initialState: UserSliceState = {
     newUserData: {
         email: "",
         username: ""
-    }
+    },
+    updatedUserData: {
+        id: null,
+        email: "",
+        username: ""
+    },
 };
 
 export const usersSlice = createAppSlice({
   name: "users",
   initialState,
   reducers: create => ({
-    // updateUser: async (state: UserSliceState, action: PayloadAction<>) => {
-    //     const user = state.users.find
-    // },
+    updateUser: (state: UserSliceState, action: PayloadAction<UserUpdateData>) => {
+        state.users = state.users.map(user => {
+            if (user.id === action.payload.id) {
+                return {
+                    ...user,
+                    ...action.payload
+                };
+            }
+            return user;
+        });
+    },
     saveUsers: (state: UserSliceState, action: PayloadAction<UserData[]>) => {
         state.users = action.payload;
     },
@@ -56,6 +74,17 @@ export const usersSlice = createAppSlice({
     setNewUserUsername: (state: UserSliceState, action: PayloadAction<string>) => {
         state.newUserData.username = action.payload;
     },
+    setUserToUpdate: (state: UserSliceState, action: PayloadAction<UserData>) => {
+        state.updatedUserData.id = action.payload.id;
+        state.updatedUserData.email = action.payload.email;
+        state.updatedUserData.username = action.payload.username;
+    },
+    setUpdatedUserName: (state: UserSliceState, action: PayloadAction<string>) => {
+        state.updatedUserData.username = action.payload;
+    },
+    setUpdatedEmail: (state: UserSliceState, action: PayloadAction<string>) => {
+        state.updatedUserData.email = action.payload;
+    }
   }),
 
   selectors: {
@@ -64,6 +93,9 @@ export const usersSlice = createAppSlice({
     getCreateDialogStatusState: state => state.createDialogOpen,
     getUpdateDialogStatusState: state => state.updateDialogOpen,
     getNewUserDataState: state => state.newUserData,
+    getUserToUpdateState: state => state.updatedUserData,
+    getUpdatedEmail: state => state.updatedUserData.email,
+    getUpdatedUsername: state => state.updatedUserData.username,
   },
 });
 
@@ -87,10 +119,24 @@ export const getCreateNewUser = (userData: UserCreateData) => async (dispatch) =
     dispatch(usersSlice.actions.createNewUser(newUser));
 }
 
+export const getUpdateNewUser = (userData: UserUpdateData) => async (dispatch) => {
+    const updatedUser = await usersApi.updateUser(userData);
+    dispatch(usersSlice.actions.updateUser(updatedUser));
+}
+
 export const {
     getAllUsersFromState,
     getCreateDialogStatusState,
     getUpdateDialogStatusState,
-    getNewUserDataState
+    getNewUserDataState,
+    getUserToUpdateState
 } = usersSlice.selectors;
-export const { setCreateDialogOpen, setUpdateDialogOpen, setNewUserEmail, setNewUserUsername } = usersSlice.actions;
+export const {
+    setCreateDialogOpen,
+    setUpdateDialogOpen,
+    setNewUserEmail,
+    setNewUserUsername,
+    setUserToUpdate,
+    setUpdatedUserName,
+    setUpdatedEmail
+} = usersSlice.actions;

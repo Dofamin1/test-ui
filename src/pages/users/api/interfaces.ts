@@ -3,6 +3,7 @@ export interface UserCreateData {
     username: string
 }
 export interface UserUpdateData {
+    id: number,
     email?: string,
     username?: string
 }

@@ -13,18 +13,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/ChangeCircle';
 import CreateDialog from './components/CreateDialog';
 import UpdateDialog from './components/UpdateDialog';
-
 import {
     fetchAllUsers,
+    setCreateDialogOpen,
+    setUpdateDialogOpen,
+    setUserToUpdate,
+    deleteAllUsers } from './usersSlice';
+import {
     getDeleteUser,
     getAllUsersFromState,
     getCreateDialogStatusState,
     getUpdateDialogStatusState,
-    setCreateDialogOpen,
-    setUpdateDialogOpen,
-    deleteAllUsers } from './usersSlice';
+    } from './usersSlice';
 import { store } from '../../app/store';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import {UserData} from "./api/interfaces";
 
 export default function BasicTable() {
     const dispatch = useAppDispatch();
@@ -38,6 +41,11 @@ export default function BasicTable() {
         };
         fetchUsers();
     }, []);
+
+    const updateSelectedUser = (user: UserData) => {
+        dispatch(setUserToUpdate(user));
+        dispatch(setUpdateDialogOpen(true));
+    }
 
     return (
       <>
@@ -64,7 +72,7 @@ export default function BasicTable() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {users.map((row) => (
+                    {users.map((row: UserData) => (
                         <TableRow
                             key={row.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -75,7 +83,7 @@ export default function BasicTable() {
                           <TableCell align="center">{new Date(row.createdAt).toDateString()}</TableCell>
                           <TableCell align="center">{new Date(row.updatedAt).toDateString()}</TableCell>
                           <TableCell align="center">
-                              <Button type="text" onClick={() => dispatch(setUpdateDialogOpen(true))}><UpdateIcon/></Button>
+                              <Button type="text" onClick={() => updateSelectedUser(row)}><UpdateIcon/></Button>
                               <Button color="error" onClick={() => store.dispatch(getDeleteUser(row.id))}><DeleteIcon/></Button>
                           </TableCell>
                         </TableRow>

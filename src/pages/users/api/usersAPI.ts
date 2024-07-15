@@ -12,9 +12,12 @@ const usersApi = {
     }
   },
 
-  updateUser: async (userId: number, userData: UserUpdateData): Promise<UserData>  => {
+  updateUser: async (userData: UserUpdateData): Promise<UserData>  => {
     try {
-      const response = await axios.put(`${config.API_URL}/user/${userId}`, userData);
+      const response = await axios.put(`${config.API_URL}/user`, {
+        userId: userData.id,
+        ...userData
+      });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update user');
