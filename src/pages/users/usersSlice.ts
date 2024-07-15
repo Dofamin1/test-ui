@@ -6,11 +6,20 @@ import type {UserCreateData, UserData, UserUpdateData} from './api/interfaces';
 export interface UserSliceState {
   users: UserData[],
   loading: boolean,
+  createDialogOpen: boolean,
+  updateDialogOpen: boolean,
+  newUserData: UserCreateData,
 };
 
 const initialState: UserSliceState = {
     users: [],
-    loading: false
+    loading: false,
+    createDialogOpen: false,
+    updateDialogOpen: false,
+    newUserData: {
+        email: "",
+        username: ""
+    }
 };
 
 export const usersSlice = createAppSlice({
@@ -34,12 +43,27 @@ export const usersSlice = createAppSlice({
     },
     setLoading: (state: UserSliceState, action: PayloadAction<boolean>) => {
         state.loading = action.payload;
-    }
+    },
+    setCreateDialogOpen: (state: UserSliceState, action: PayloadAction<boolean>) => {
+        state.createDialogOpen = action.payload;
+    },
+    setUpdateDialogOpen: (state: UserSliceState, action: PayloadAction<boolean>) => {
+        state.updateDialogOpen = action.payload;
+    },
+    setNewUserEmail: (state: UserSliceState, action: PayloadAction<string>) => {
+        state.newUserData.email = action.payload;
+    },
+    setNewUserUsername: (state: UserSliceState, action: PayloadAction<string>) => {
+        state.newUserData.username = action.payload;
+    },
   }),
 
   selectors: {
     getAllUsersFromState: state => state.users,
-    getLoadingStatus: state => state.loading
+    getLoadingStatusState: state => state.loading,
+    getCreateDialogStatusState: state => state.createDialogOpen,
+    getUpdateDialogStatusState: state => state.updateDialogOpen,
+    getNewUserDataState: state => state.newUserData,
   },
 });
 
@@ -58,9 +82,15 @@ export const getDeleteUser = (userId: number) => async (dispatch) => {
     dispatch(usersSlice.actions.deleteUser(userId));
 }
 
-export const createNewUser = async (dispatch, userData: UserCreateData) => {
+export const getCreateNewUser = (userData: UserCreateData) => async (dispatch) => {
     const newUser = await usersApi.createUser(userData);
     dispatch(usersSlice.actions.createNewUser(newUser));
 }
 
-export const { getAllUsersFromState } = usersSlice.selectors;
+export const {
+    getAllUsersFromState,
+    getCreateDialogStatusState,
+    getUpdateDialogStatusState,
+    getNewUserDataState
+} = usersSlice.selectors;
+export const { setCreateDialogOpen, setUpdateDialogOpen, setNewUserEmail, setNewUserUsername } = usersSlice.actions;

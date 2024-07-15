@@ -11,12 +11,26 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/ChangeCircle';
-import { fetchAllUsers, getDeleteUser, getAllUsersFromState, deleteAllUsers } from './usersSlice';
+import CreateDialog from './components/CreateDialog';
+import UpdateDialog from './components/UpdateDialog';
+
+import {
+    fetchAllUsers,
+    getDeleteUser,
+    getAllUsersFromState,
+    getCreateDialogStatusState,
+    getUpdateDialogStatusState,
+    setCreateDialogOpen,
+    setUpdateDialogOpen,
+    deleteAllUsers } from './usersSlice';
 import { store } from '../../app/store';
-import { useAppSelector } from '../../app/hooks';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
 
 export default function BasicTable() {
+    const dispatch = useAppDispatch();
     const users = useAppSelector(() => getAllUsersFromState(store.getState()));
+    const createDialogStatus = useAppSelector(() => getCreateDialogStatusState(store.getState()));
+    const updateDialogStatus = useAppSelector(() => getUpdateDialogStatusState(store.getState()));
 
     React.useEffect(() => {
         const fetchUsers = async () => {
@@ -27,9 +41,11 @@ export default function BasicTable() {
 
     return (
       <>
+          <CreateDialog onClose={() => dispatch(setCreateDialogOpen(false))} open={createDialogStatus}></CreateDialog>
+          <UpdateDialog onClose={() => dispatch(setUpdateDialogOpen(false))} open={updateDialogStatus}></UpdateDialog>
           <Container sx={{ my: 4 }}>
               <Stack spacing={2} direction="row" justifyContent="right" alignItems="right">
-                  <Button variant="contained">New User</Button>
+                  <Button variant="contained" onClick={() => dispatch(setCreateDialogOpen(true))}>New User</Button>
                   <Button variant="outlined">Upload .xlsx</Button>
                   <Button variant="contained" color="error" onClick={() => store.dispatch(deleteAllUsers)}>Delete All</Button>
               </Stack>
@@ -59,7 +75,7 @@ export default function BasicTable() {
                           <TableCell align="center">{new Date(row.createdAt).toDateString()}</TableCell>
                           <TableCell align="center">{new Date(row.updatedAt).toDateString()}</TableCell>
                           <TableCell align="center">
-                              <Button type="text"><UpdateIcon/></Button>
+                              <Button type="text" onClick={() => dispatch(setUpdateDialogOpen(true))}><UpdateIcon/></Button>
                               <Button color="error" onClick={() => store.dispatch(getDeleteUser(row.id))}><DeleteIcon/></Button>
                           </TableCell>
                         </TableRow>
