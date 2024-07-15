@@ -1,22 +1,21 @@
 import * as React from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import { store } from "../../../app/store";
-import { setUpdatedUserName, setUpdatedEmail } from "../usersSlice";
-import { getUpdateNewUser, getUserToUpdateState } from "../usersSlice";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import { store } from "../../../app/store";
+import { setUpdatedUserName, setUpdatedEmail } from "../usersSlice";
+import { getUpdateNewUser, getUserToUpdateState } from "../usersSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 
-export interface SimpleDialogProps {
+export interface Props {
     open: boolean;
-    selectedValue: string;
     onClose: (value: string) => void;
 }
 
-export default function UpdateUserDialog(props: SimpleDialogProps) {
+export default function UpdateUserDialog(props: Props) {
     const { onClose, open } = props;
 
     const dispatch = useAppDispatch();

@@ -32,18 +32,14 @@ import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import type {UserData} from "./api/interfaces";
 
 export default function BasicTable() {
-    const fileInputRef = React.useRef(null);
     const dispatch = useAppDispatch();
-    const users = useAppSelector(() => getAllUsersFromState(store.getState()));
     const createDialogStatus = useAppSelector(() => getCreateDialogStatusState(store.getState()));
     const updateDialogStatus = useAppSelector(() => getUpdateDialogStatusState(store.getState()));
 
-    React.useEffect(() => {
-        const fetchUsers = async () => {
-            await store.dispatch(fetchAllUsers);
-        };
-        fetchUsers();
-    }, []);
+    const users = useAppSelector(() => getAllUsersFromState(store.getState()));
+    const fileInputRef = React.useRef(null);
+
+    React.useEffect(() => { store.dispatch(fetchAllUsers)}, []);
 
     const updateSelectedUser = (user: UserData) => {
         dispatch(setUserToUpdate(user));
@@ -95,8 +91,8 @@ export default function BasicTable() {
                           <TableCell align="center" component="th" scope="row">{row.id}</TableCell>
                           <TableCell align="center" component="th" scope="row">{row.username}</TableCell>
                           <TableCell align="center">{row.email}</TableCell>
-                          <TableCell align="center">{new Date(row.createdAt).toDateString()}</TableCell>
-                          <TableCell align="center">{new Date(row.updatedAt).toDateString()}</TableCell>
+                          <TableCell align="center">{new Date(row.createdAt).toUTCString()}</TableCell>
+                          <TableCell align="center">{new Date(row.updatedAt).toUTCString()}</TableCell>
                           <TableCell align="center">
                               <Button type="text" onClick={() => updateSelectedUser(row)}><UpdateIcon/></Button>
                               <Button color="error" onClick={() => store.dispatch(getDeleteUser(row.id))}><DeleteIcon/></Button>

@@ -45,7 +45,7 @@ const usersApi = {
     try {
       await axios.delete(`${config.API_URL}/user`);
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to delete user');
+      throw new Error(error.response?.data?.message || 'Failed to delete all users');
     }
   },
 

@@ -5,7 +5,6 @@ import type {UserCreateData, UserData, UserUpdateData} from './api/interfaces';
 
 export interface UserSliceState {
   users: UserData[],
-  loading: boolean,
   createDialogOpen: boolean,
   updateDialogOpen: boolean,
   newUserData: UserCreateData,
@@ -18,7 +17,6 @@ export interface UserSliceState {
 
 const initialState: UserSliceState = {
     users: [],
-    loading: false,
     createDialogOpen: false,
     updateDialogOpen: false,
     newUserData: {
@@ -50,7 +48,7 @@ export const usersSlice = createAppSlice({
     saveUsers: (state: UserSliceState, action: PayloadAction<UserData[]>) => {
         state.users = action.payload;
     },
-    createNewUser: (state: UserSliceState, action: PayloadAction<UserCreateData>) => {
+    createNewUser: (state: UserSliceState, action: PayloadAction<UserData>) => {
         state.users.push(action.payload);
     },
     deleteUser: (state: UserSliceState, action: PayloadAction<number>) => {
@@ -58,9 +56,6 @@ export const usersSlice = createAppSlice({
     },
     deleteAllUsers: (state: UserSliceState) => {
         state.users = [];
-    },
-    setLoading: (state: UserSliceState, action: PayloadAction<boolean>) => {
-        state.loading = action.payload;
     },
     setCreateDialogOpen: (state: UserSliceState, action: PayloadAction<boolean>) => {
         state.createDialogOpen = action.payload;
@@ -89,7 +84,6 @@ export const usersSlice = createAppSlice({
 
   selectors: {
     getAllUsersFromState: state => state.users,
-    getLoadingStatusState: state => state.loading,
     getCreateDialogStatusState: state => state.createDialogOpen,
     getUpdateDialogStatusState: state => state.updateDialogOpen,
     getNewUserDataState: state => state.newUserData,

@@ -16,13 +16,12 @@ import {
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { store } from "../../../app/store";
 
-export interface SimpleDialogProps {
+export interface Props {
     open: boolean;
-    selectedValue: string;
     onClose: (value: string) => void;
 }
 
-export default function CreateUserDialog(props: SimpleDialogProps) {
+export default function CreateUserDialog(props: Props) {
     const { onClose, open } = props;
     const dispatch = useAppDispatch();
     const userData = useAppSelector(() => getNewUserDataState(store.getState()));
