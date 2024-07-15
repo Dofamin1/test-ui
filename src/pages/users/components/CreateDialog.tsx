@@ -25,6 +25,7 @@ export default function CreateUserDialog(props: Props) {
     const { onClose, open } = props;
     const dispatch = useAppDispatch();
     const userData = useAppSelector(() => getNewUserDataState(store.getState()));
+    const isButtonDisabled = !userData.username || !userData.email;
 
     const submitNewUser = () => {
         store.dispatch(getCreateNewUser(userData));
@@ -44,6 +45,7 @@ export default function CreateUserDialog(props: Props) {
                         color="primary"
                         onClick={submitNewUser}
                         sx={{ alignSelf: 'center', py: 1, px: 4 }}
+                        disabled={isButtonDisabled}
                     >
                         Create
                     </Button>
