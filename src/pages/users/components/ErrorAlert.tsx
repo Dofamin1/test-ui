@@ -6,10 +6,19 @@ import {getErrorTextFromState, setErrorText} from "../usersSlice";
 import {store} from "../../../app/store";
 
 export default function ErrorAlert() {
-    const SHOW_TIMEOUT = 5000;
+    const SHOW_TIMEOUT = 3000;
     const dispatch = useAppDispatch();
     const errorText = useAppSelector(() => getErrorTextFromState(store.getState()));
-    setTimeout(() => { dispatch(setErrorText(null)); }, SHOW_TIMEOUT);
+
+    React.useEffect(() => {
+        if (errorText) {
+            const timer = setTimeout(() => {
+                dispatch(setErrorText(null));
+            }, SHOW_TIMEOUT);
+
+            return () => clearTimeout(timer);
+        }
+    }, [errorText, dispatch]);
 
     return (
         <>
