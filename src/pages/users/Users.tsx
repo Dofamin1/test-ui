@@ -30,6 +30,7 @@ import {
 import { store } from '../../app/store';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import type {UserData} from "./api/interfaces";
+import ErrorAlert from "./components/ErrorAlert";
 
 export default function BasicTable() {
     const dispatch = useAppDispatch();
@@ -53,6 +54,7 @@ export default function BasicTable() {
 
     return (
       <>
+          <ErrorAlert></ErrorAlert>
           <CreateDialog onClose={() => dispatch(setCreateDialogOpen(false))} open={createDialogStatus}></CreateDialog>
           <UpdateDialog onClose={() => dispatch(setUpdateDialogOpen(false))} open={updateDialogStatus}></UpdateDialog>
           <Container sx={{ my: 4 }}>

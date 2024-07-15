@@ -13,6 +13,7 @@ export interface UserSliceState {
       email: string,
       username: string
   },
+  errorText: string | null
 };
 
 const initialState: UserSliceState = {
@@ -28,6 +29,7 @@ const initialState: UserSliceState = {
         email: "",
         username: ""
     },
+    errorText: null
 };
 
 export const usersSlice = createAppSlice({
@@ -79,6 +81,9 @@ export const usersSlice = createAppSlice({
     },
     setUpdatedEmail: (state: UserSliceState, action: PayloadAction<string>) => {
         state.updatedUserData.email = action.payload;
+    },
+    setErrorText: (state: UserSliceState, action: PayloadAction<string>) => {
+        state.errorText = action.payload;
     }
   }),
 
@@ -90,37 +95,62 @@ export const usersSlice = createAppSlice({
     getUserToUpdateState: state => state.updatedUserData,
     getUpdatedEmail: state => state.updatedUserData.email,
     getUpdatedUsername: state => state.updatedUserData.username,
+    getErrorTextFromState: state => state.errorText
   },
 });
 
 export const fetchAllUsers = async (dispatch) => {
-    const users = await usersApi.getUsers();
-    dispatch(usersSlice.actions.saveUsers(users));
+    try {
+        const users = await usersApi.getUsers();
+        dispatch(usersSlice.actions.saveUsers(users));
+    } catch (e) {
+        dispatch(usersSlice.actions.setErrorText(e.message || 'Failed to fetch users'));
+    }
 };
 
 export const deleteAllUsers = async (dispatch) => {
-    await usersApi.deleteAllUsers();
-    dispatch(usersSlice.actions.deleteAllUsers());
+    try {
+        await usersApi.deleteAllUsers();
+        dispatch(usersSlice.actions.deleteAllUsers());
+    } catch (e) {
+        dispatch(usersSlice.actions.setErrorText(e.message || 'Failed to delete all users'));
+    }
 }
 
 export const getDeleteUser = (userId: number) => async (dispatch) => {
-    await usersApi.deleteUser(userId);
-    dispatch(usersSlice.actions.deleteUser(userId));
+    try {
+        await usersApi.deleteUser(userId);
+        dispatch(usersSlice.actions.deleteUser(userId));
+    } catch (e) {
+        dispatch(usersSlice.actions.setErrorText(e.message || 'Failed to delete user'));
+    }
 }
 
 export const getCreateNewUser = (userData: UserCreateData) => async (dispatch) => {
-    const newUser = await usersApi.createUser(userData);
-    dispatch(usersSlice.actions.createNewUser(newUser));
+    try {
+        const newUser = await usersApi.createUser(userData);
+        dispatch(usersSlice.actions.createNewUser(newUser));
+    } catch (e) {
+        dispatch(usersSlice.actions.setErrorText(e.message || 'Failed to create new user'));
+    }
 }
 
 export const getUpdateNewUser = (userData: UserUpdateData) => async (dispatch) => {
-    const updatedUser = await usersApi.updateUser(userData);
-    dispatch(usersSlice.actions.updateUser(updatedUser));
+    try {
+        const updatedUser = await usersApi.updateUser(userData);
+        dispatch(usersSlice.actions.updateUser(updatedUser));
+    } catch (e) {
+        dispatch(usersSlice.actions.setErrorText(e.message || 'Failed to update user'));
+    }
 }
 
 export const getUploadData = (file: File) => async (dispatch) => {
-    const users = await usersApi.uploadFile(file);
-    dispatch(usersSlice.actions.saveUsers(users));
+    try {
+        const users = await usersApi.uploadFile(file);
+        dispatch(usersSlice.actions.saveUsers(users));
+    } catch (e) {
+        dispatch(usersSlice.actions.setErrorText(e.message || 'Failed to update user'));
+    }
 }
 
 export const {
@@ -128,7 +158,8 @@ export const {
     getCreateDialogStatusState,
     getUpdateDialogStatusState,
     getNewUserDataState,
-    getUserToUpdateState
+    getUserToUpdateState,
+    getErrorTextFromState
 } = usersSlice.selectors;
 export const {
     setCreateDialogOpen,
@@ -137,5 +168,6 @@ export const {
     setNewUserUsername,
     setUserToUpdate,
     setUpdatedUserName,
-    setUpdatedEmail
+    setUpdatedEmail,
+    setErrorText
 } = usersSlice.actions;
