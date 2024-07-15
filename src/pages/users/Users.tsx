@@ -18,7 +18,9 @@ import {
     setCreateDialogOpen,
     setUpdateDialogOpen,
     setUserToUpdate,
-    deleteAllUsers } from './usersSlice';
+    deleteAllUsers,
+    getUploadData
+} from './usersSlice';
 import {
     getDeleteUser,
     getAllUsersFromState,
@@ -27,9 +29,10 @@ import {
     } from './usersSlice';
 import { store } from '../../app/store';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import {UserData} from "./api/interfaces";
+import type {UserData} from "./api/interfaces";
 
 export default function BasicTable() {
+    const fileInputRef = React.useRef(null);
     const dispatch = useAppDispatch();
     const users = useAppSelector(() => getAllUsersFromState(store.getState()));
     const createDialogStatus = useAppSelector(() => getCreateDialogStatusState(store.getState()));
@@ -47,6 +50,11 @@ export default function BasicTable() {
         dispatch(setUpdateDialogOpen(true));
     }
 
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        store.dispatch(getUploadData(file));
+    };
+
     return (
       <>
           <CreateDialog onClose={() => dispatch(setCreateDialogOpen(false))} open={createDialogStatus}></CreateDialog>
@@ -54,7 +62,14 @@ export default function BasicTable() {
           <Container sx={{ my: 4 }}>
               <Stack spacing={2} direction="row" justifyContent="right" alignItems="right">
                   <Button variant="contained" onClick={() => dispatch(setCreateDialogOpen(true))}>New User</Button>
-                  <Button variant="outlined">Upload .xlsx</Button>
+                  <Button variant="outlined" onClick={() => {fileInputRef.current.click()}}>Upload .xlsx</Button>
+                  <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: 'none' }} // Hide the file input
+                      accept=".xlsx"
+                      onChange={handleFileChange}
+                  />
                   <Button variant="contained" color="error" onClick={() => store.dispatch(deleteAllUsers)}>Delete All</Button>
               </Stack>
           </Container>

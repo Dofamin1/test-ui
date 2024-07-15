@@ -47,6 +47,18 @@ const usersApi = {
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to delete user');
     }
+  },
+
+  uploadFile: async (file: File): Promise<UserData[]> => {
+    try {
+      const form = new FormData();
+      form.append('file', file);
+
+      const response = await axios.post(`${config.API_URL}/user/upload`, form);
+      return response.data;
+    } catch (error) {
+      throw new Error('Failed to upload file');
+    }
   }
 };
 

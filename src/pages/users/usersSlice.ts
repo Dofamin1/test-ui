@@ -124,6 +124,11 @@ export const getUpdateNewUser = (userData: UserUpdateData) => async (dispatch) =
     dispatch(usersSlice.actions.updateUser(updatedUser));
 }
 
+export const getUploadData = (file: File) => async (dispatch) => {
+    const users = await usersApi.uploadFile(file);
+    dispatch(usersSlice.actions.saveUsers(users));
+}
+
 export const {
     getAllUsersFromState,
     getCreateDialogStatusState,
